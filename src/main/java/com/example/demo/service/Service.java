@@ -2,13 +2,8 @@ package com.example.demo.service;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
-import com.example.demo.entity.Bind;
-import com.example.demo.entity.Identity;
-import com.example.demo.entity.Search;
-import com.example.demo.entity.User;
-import com.example.demo.mapper.BindMapper;
-import com.example.demo.mapper.IdentityMapper;
-import com.example.demo.mapper.UserMapper;
+import com.example.demo.entity.*;
+import com.example.demo.mapper.*;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
@@ -23,7 +18,13 @@ public class Service {
     IdentityMapper identityMapper;
 
     @Autowired
+    DomicileMapper domicileMapper;
+
+    @Autowired
     BindMapper bindMapper;
+
+    @Autowired
+    MigrateMapper migrateMapper;
 
     public User login(String username, String password) {
         QueryWrapper<User> queryWrapper = new QueryWrapper<>();
@@ -81,4 +82,32 @@ public class Service {
         queryWrapper.like(type, index);
         return identityMapper.selectList(queryWrapper);
     }
+
+
+    public List<Domicile> selectDomicile() {
+        return domicileMapper.selectList(null);
+    }
+
+    public boolean addDomicile(Domicile domicile) {
+        return domicileMapper.insert(domicile) > 0;
+    }
+
+    public boolean addMigrate(Migrate migrate) {
+        migrate.setStatus(1);
+        return migrateMapper.insert(migrate) > 0;
+    }
+
+    public boolean editMigrate(Migrate migrate) {
+        UpdateWrapper<Migrate> updateWrapper = new UpdateWrapper<>();
+        updateWrapper.eq("id", migrate.getId());
+        migrate.setStatus(1);
+        return migrateMapper.updateById(migrate) > 0;
+    }
+
+    public boolean getMigrateStatus(String id) {
+        QueryWrapper<Migrate> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("id", id);
+        return migrateMapper.selectById(id) != null;
+    }
+
 }
