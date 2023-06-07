@@ -1,9 +1,9 @@
 package com.example.demo.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.example.demo.entity.Resident;
+import com.example.demo.entity.Modification;
 import org.apache.ibatis.annotations.Mapper;
 
 @Mapper
-public interface ResidentMapper extends BaseMapper<Resident> {
+public interface ModificationMapper extends BaseMapper<Modification> {
 }

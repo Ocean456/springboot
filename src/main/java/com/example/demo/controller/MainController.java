@@ -1,8 +1,8 @@
 package com.example.demo.controller;
 
 import com.example.demo.entity.Bind;
-import com.example.demo.entity.LoginForm;
-import com.example.demo.entity.Register;
+import com.example.demo.dto.LoginForm;
+import com.example.demo.dto.Register;
 import com.example.demo.entity.User;
 import com.example.demo.service.Service;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-public class Controller {
+public class MainController {
 
     @SuppressWarnings("SpringJavaAutowiredFieldsWarningInspection")
     @Autowired
@@ -49,7 +49,7 @@ public class Controller {
         if (service.queryUser(user)) {
             return ResponseEntity.status(HttpStatus.CONFLICT.value()).body("用户名已存在");
         } else {
-            if (!service.selectId(bind.getId())) {
+            if (service.getIdentity(bind.getId()) != null) {
                 return ResponseEntity.status(HttpStatus.CONFLICT.value()).body("身份证号错误");
             }
             service.register(user, bind);

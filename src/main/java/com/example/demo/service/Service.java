@@ -2,6 +2,7 @@ package com.example.demo.service;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
+import com.example.demo.dto.Search;
 import com.example.demo.entity.*;
 import com.example.demo.mapper.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +26,12 @@ public class Service {
 
     @Autowired
     MigrateMapper migrateMapper;
+
+    @Autowired
+    ResidentMapper residentMapper;
+
+    @Autowired
+    ModificationMapper modificationMapper;
 
     public User login(String username, String password) {
         QueryWrapper<User> queryWrapper = new QueryWrapper<>();
@@ -66,25 +73,27 @@ public class Service {
         return identityMapper.selectById(id);
     }
 
-    public boolean selectId(String id) {
-        return identityMapper.selectById(id) != null;
+    public Identity getIdentity(String id) {
+        return identityMapper.selectById(id);
     }
 
-    public List<Identity> selectIdentity() {
+    public List<Identity> getIdentity() {
         return identityMapper.selectList(null);
 
     }
 
-    public List<Identity> selectIdentity(Search search) {
-        String type = search.getType();
-        String index = search.getIndex();
+    public List<Identity> getIdentity(Search search) {
         QueryWrapper<Identity> queryWrapper = new QueryWrapper<>();
-        queryWrapper.like(type, index);
+        queryWrapper.like(search.getType(), search.getIndex());
         return identityMapper.selectList(queryWrapper);
     }
 
 
-    public List<Domicile> selectDomicile() {
+    public Domicile getDomicile(String id) {
+        return domicileMapper.selectById(id);
+    }
+
+    public List<Domicile> getDomicile() {
         return domicileMapper.selectList(null);
     }
 
@@ -105,9 +114,33 @@ public class Service {
     }
 
     public boolean getMigrateStatus(String id) {
-        QueryWrapper<Migrate> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("id", id);
         return migrateMapper.selectById(id) != null;
     }
 
+    public boolean editDomicile(Domicile domicile) {
+        return domicileMapper.updateById(domicile) > 0;
+    }
+
+    public List<Domicile> getDomicile(Search search) {
+        QueryWrapper<Domicile> queryWrapper = new QueryWrapper<>();
+        queryWrapper.like(search.getType(), search.getIndex());
+        return domicileMapper.selectList(queryWrapper);
+    }
+
+    public Resident getResident(String id) {
+        return residentMapper.selectById(id);
+    }
+
+    public boolean deleteDomicile(String id) {
+        return domicileMapper.deleteById(id) > 0;
+    }
+
+    @SuppressWarnings("UnusedReturnValue")
+    public boolean addResident(Resident resident) {
+        return residentMapper.insert(resident) > 0;
+    }
+
+    public boolean submitModification(Modification modification) {
+        return modificationMapper.insert(modification) > 0;
+    }
 }

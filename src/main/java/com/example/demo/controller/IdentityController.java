@@ -1,7 +1,8 @@
 package com.example.demo.controller;
 
+import com.example.demo.dto.Search;
 import com.example.demo.entity.Identity;
-import com.example.demo.entity.Search;
+import com.example.demo.entity.Modification;
 import com.example.demo.service.Service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -19,15 +20,14 @@ public class IdentityController {
 
     @GetMapping("/search")
     public List<Identity> getIdentity(Search search) {
-        if (search.getType()==null){
-            return service.selectIdentity();
+        if (search.getType() == null) {
+            return service.getIdentity();
         }
-        return service.selectIdentity(search);
+        return service.getIdentity(search);
     }
 
     @DeleteMapping("/delete")
-    public ResponseEntity<Object> deleteIdentity(@RequestBody Identity identity) {
-        String id = identity.getId();
+    public ResponseEntity<Object> deleteIdentity(String id) {
         if (service.deleteIdentity(id)) {
             return ResponseEntity.ok("删除成功");
         } else {
@@ -57,5 +57,14 @@ public class IdentityController {
     public ResponseEntity<Object> getPersonal(String username) {
         Identity identity = service.getPerson(username);
         return ResponseEntity.ok(identity);
+    }
+
+    @PostMapping("/submit")
+    public ResponseEntity<Object> submitIdentity(@RequestBody Modification modification) {
+        if (service.submitModification(modification)) {
+            return ResponseEntity.ok("提交成功");
+        } else {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("服务器内部错误");
+        }
     }
 }

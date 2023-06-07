@@ -1,13 +1,9 @@
-package com.example.demo.entity;
+package com.example.demo.dto;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
 import lombok.Data;
 
 @Data
-@Entity
 public class Register {
-    @Id
     private String id;
     private String username;
     private String password;
