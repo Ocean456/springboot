@@ -33,6 +33,9 @@ public class Service {
     @Autowired
     ModificationMapper modificationMapper;
 
+    @Autowired
+    IssuanceMapper issuanceMapper;
+
     public User login(String username, String password) {
         QueryWrapper<User> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("username", username).eq("password", password);
@@ -66,7 +69,7 @@ public class Service {
         return userMapper.selectOne(queryWrapper) != null;
     }
 
-    public Identity getPerson(String username) {
+    public Identity getPerson(String username) throws NullPointerException {
         QueryWrapper<Bind> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("username", username);
         String id = bindMapper.selectOne(queryWrapper).getId();
@@ -113,8 +116,8 @@ public class Service {
         return migrateMapper.updateById(migrate) > 0;
     }
 
-    public boolean getMigrateStatus(String id) {
-        return migrateMapper.selectById(id) != null;
+    public Migrate getMigrate(String id) {
+        return migrateMapper.selectById(id);
     }
 
     public boolean editDomicile(Domicile domicile) {
@@ -142,5 +145,29 @@ public class Service {
 
     public boolean submitModification(Modification modification) {
         return modificationMapper.insert(modification) > 0;
+    }
+
+    public Modification getModification(String id) {
+        return modificationMapper.selectById(id);
+    }
+
+    public boolean editModification(Modification modification) {
+        return modificationMapper.updateById(modification) > 0;
+    }
+
+    public Issuance getIssuance(String id, String type) {
+        QueryWrapper<Issuance> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("id", id).eq("type", type);
+        return issuanceMapper.selectOne(queryWrapper);
+    }
+
+    public boolean addIssuance(Issuance issuance) {
+        return issuanceMapper.insert(issuance) > 0;
+    }
+
+    public boolean editIssuance(Issuance issuance) {
+        UpdateWrapper<Issuance> updateWrapper = new UpdateWrapper<>();
+        updateWrapper.eq("id", issuance.getId()).eq("type", issuance.getType());
+        return issuanceMapper.update(issuance, updateWrapper) > 0;
     }
 }

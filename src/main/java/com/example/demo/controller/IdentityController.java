@@ -55,16 +55,34 @@ public class IdentityController {
 
     @GetMapping("/personal")
     public ResponseEntity<Object> getPersonal(String username) {
-        Identity identity = service.getPerson(username);
-        return ResponseEntity.ok(identity);
+        try {
+            Identity identity = service.getPerson(username);
+            return ResponseEntity.ok(identity);
+
+        } catch (NullPointerException e) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("数据异常");
+        }
     }
 
     @PostMapping("/submit")
     public ResponseEntity<Object> submitIdentity(@RequestBody Modification modification) {
-        if (service.submitModification(modification)) {
-            return ResponseEntity.ok("提交成功");
+        if (service.getModification(modification.getId()) != null) {
+            if (service.submitModification(modification)) {
+                return ResponseEntity.ok("提交成功");
+            } else {
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).body("服务器内部错误");
+            }
         } else {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("服务器内部错误");
+            if (service.editModification(modification)) {
+                return ResponseEntity.ok("修改申请成功");
+            } else {
+                return ResponseEntity.status(HttpStatus.CONFLICT).body("服务器内部错误");
+            }
         }
+    }
+
+    @GetMapping("/get")
+    public Modification getModification(String id) {
+        return service.getModification(id);
     }
 }

@@ -1,6 +1,5 @@
 package com.example.demo.entity;
 
-
 import com.baomidou.mybatisplus.annotation.TableName;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
@@ -10,12 +9,12 @@ import java.time.LocalDate;
 
 @Entity
 @Data
-@TableName("migrate")
-public class Migrate {
+@TableName("issuance")
+public class Issuance {
     @Id
     private String id;
-    private String address;
-    private LocalDate date;
+    private String type;
     private String reason;
-    private int status;
+    private LocalDate period;
+    private int status = 1;
 }

@@ -4,7 +4,7 @@ import com.example.demo.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -13,20 +13,21 @@ import java.time.LocalDate;
 @CrossOrigin
 @RestController
 @Service
-@RequestMapping("/api/Analysis")
+@RequestMapping("/api/analysis")
 public class AnalysisController {
     @SuppressWarnings("SpringJavaAutowiredFieldsWarningInspection")
     @Autowired
     private UserRepository userRepository;
 
-    @PostMapping("/genderCount")
+    @GetMapping("/genderCount")
     public int[] getGenderCount() {
         int[] genderCounts = new int[2];
         genderCounts[0] = userRepository.countByGender("男");
         genderCounts[1] = userRepository.countByGender("女");
         return genderCounts;
     }
-    @PostMapping("/educationData")
+
+    @GetMapping("/educationData")
     public int[] educationData() {
         int[] educationCounts = new int[5];
         educationCounts[0] = userRepository.countByEducation("小学");
@@ -36,7 +37,8 @@ public class AnalysisController {
         educationCounts[4] = userRepository.countByEducation("研究生");
         return educationCounts;
     }
-    @PostMapping("/AgeCounts")
+
+    @GetMapping("/AgeCounts")
     public int[] getAgeCounts() {
         LocalDate startDate1 = LocalDate.of(2013, 1, 1);
         LocalDate startDate2 = LocalDate.of(2005, 1, 1);
