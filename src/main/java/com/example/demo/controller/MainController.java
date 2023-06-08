@@ -49,7 +49,7 @@ public class MainController {
         if (service.queryUser(user)) {
             return ResponseEntity.status(HttpStatus.CONFLICT.value()).body("用户名已存在");
         } else {
-            if (service.getIdentity(bind.getId()) != null) {
+            if (service.getIdentity(bind.getId()) == null) {
                 return ResponseEntity.status(HttpStatus.CONFLICT.value()).body("身份证号错误");
             }
             service.register(user, bind);

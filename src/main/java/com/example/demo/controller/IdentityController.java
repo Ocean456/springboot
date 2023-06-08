@@ -66,7 +66,7 @@ public class IdentityController {
 
     @PostMapping("/submit")
     public ResponseEntity<Object> submitIdentity(@RequestBody Modification modification) {
-        if (service.getModification(modification.getId()) != null) {
+        if (service.getModification(modification.getId()) == null) {
             if (service.submitModification(modification)) {
                 return ResponseEntity.ok("提交成功");
             } else {

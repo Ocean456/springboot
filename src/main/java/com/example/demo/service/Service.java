@@ -2,6 +2,8 @@ package com.example.demo.service;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
+import com.example.demo.dto.ManageMigrate;
+import com.example.demo.dto.ManageResident;
 import com.example.demo.dto.Search;
 import com.example.demo.entity.*;
 import com.example.demo.mapper.*;
@@ -35,6 +37,9 @@ public class Service {
 
     @Autowired
     IssuanceMapper issuanceMapper;
+
+    @Autowired
+    ExtendMapper extendMapper;
 
     public User login(String username, String password) {
         QueryWrapper<User> queryWrapper = new QueryWrapper<>();
@@ -112,7 +117,6 @@ public class Service {
     public boolean editMigrate(Migrate migrate) {
         UpdateWrapper<Migrate> updateWrapper = new UpdateWrapper<>();
         updateWrapper.eq("id", migrate.getId());
-        migrate.setStatus(1);
         return migrateMapper.updateById(migrate) > 0;
     }
 
@@ -171,7 +175,15 @@ public class Service {
         return issuanceMapper.update(issuance, updateWrapper) > 0;
     }
 
-    public List<Migrate> getMigrate() {
-        return migrateMapper.selectList(null);
+    public List<ManageMigrate> getMigrate() {
+        return extendMapper.selectMigrate();
+    }
+
+    public List<ManageResident> getResident() {
+        return extendMapper.selectResident();
+    }
+
+    public boolean editResident(Resident resident) {
+        return residentMapper.updateById(resident) > 0;
     }
 }

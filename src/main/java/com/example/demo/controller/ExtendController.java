@@ -1,5 +1,7 @@
 package com.example.demo.controller;
 
+import com.example.demo.dto.ManageMigrate;
+import com.example.demo.dto.ManageResident;
 import com.example.demo.dto.Total;
 import com.example.demo.entity.*;
 import com.example.demo.service.Service;
@@ -114,8 +116,31 @@ public class ExtendController {
     }
 
     @GetMapping("/migrate/search")
-    public List<Migrate> searchMigrate() {
+    public List<ManageMigrate> searchMigrate() {
         return service.getMigrate();
+    }
+
+    @GetMapping("/resident/search")
+    public List<ManageResident> searchResident() {
+        return service.getResident();
+    }
+
+    @PutMapping("/migrate/handle")
+    public ResponseEntity<Object> handleMigrate(@RequestBody Migrate migrate) {
+        if (service.editMigrate(migrate)) {
+            return ResponseEntity.ok("处理成功");
+        } else {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("处理失败");
+        }
+    }
+
+    @PutMapping("/resident/handle")
+    public ResponseEntity<Object> handleResident(@RequestBody Resident resident) {
+        if (service.editResident(resident)) {
+            return ResponseEntity.ok("处理成功");
+        } else {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("处理失败");
+        }
     }
 }
 

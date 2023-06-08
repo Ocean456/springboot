@@ -5,7 +5,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import lombok.Data;
 
-import java.sql.Date;
+import java.time.LocalDate;
 
 @Entity
 @TableName("resident")
@@ -13,6 +13,6 @@ import java.sql.Date;
 public class Resident {
     @Id
     private String id;
-    private Date period;
-    private int status = 1;
+    private LocalDate period;
+    private int status;
 }
