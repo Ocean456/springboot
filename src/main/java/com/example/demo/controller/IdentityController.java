@@ -2,7 +2,6 @@ package com.example.demo.controller;
 
 import com.example.demo.dto.Search;
 import com.example.demo.entity.Identity;
-import com.example.demo.entity.Modification;
 import com.example.demo.service.Service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -64,25 +63,5 @@ public class IdentityController {
         }
     }
 
-    @PostMapping("/submit")
-    public ResponseEntity<Object> submitIdentity(@RequestBody Modification modification) {
-        if (service.getModification(modification.getId()) == null) {
-            if (service.submitModification(modification)) {
-                return ResponseEntity.ok("提交成功");
-            } else {
-                return ResponseEntity.status(HttpStatus.FORBIDDEN).body("服务器内部错误");
-            }
-        } else {
-            if (service.editModification(modification)) {
-                return ResponseEntity.ok("修改申请成功");
-            } else {
-                return ResponseEntity.status(HttpStatus.CONFLICT).body("服务器内部错误");
-            }
-        }
-    }
 
-    @GetMapping("/get")
-    public Modification getModification(String id) {
-        return service.getModification(id);
-    }
 }

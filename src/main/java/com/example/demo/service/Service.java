@@ -32,8 +32,6 @@ public class Service {
     @Autowired
     ResidentMapper residentMapper;
 
-    @Autowired
-    ModificationMapper modificationMapper;
 
     @Autowired
     IssuanceMapper issuanceMapper;
@@ -147,17 +145,6 @@ public class Service {
         return residentMapper.insert(resident) > 0;
     }
 
-    public boolean submitModification(Modification modification) {
-        return modificationMapper.insert(modification) > 0;
-    }
-
-    public Modification getModification(String id) {
-        return modificationMapper.selectById(id);
-    }
-
-    public boolean editModification(Modification modification) {
-        return modificationMapper.updateById(modification) > 0;
-    }
 
     public Issuance getIssuance(String id, String type) {
         QueryWrapper<Issuance> queryWrapper = new QueryWrapper<>();
