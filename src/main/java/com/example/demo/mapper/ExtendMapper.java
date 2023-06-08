@@ -1,5 +1,6 @@
 package com.example.demo.mapper;
 
+import com.example.demo.dto.ManageIssuance;
 import com.example.demo.dto.ManageMigrate;
 import com.example.demo.dto.ManageResident;
 import org.apache.ibatis.annotations.Mapper;
@@ -14,4 +15,7 @@ public interface ExtendMapper {
 
     @Select("select i.id,i.name,i.address,r.*" + "from identity i join resident r on i.id = r.id")
     List<ManageResident> selectResident();
+
+    @Select("select i.id,i.name,i2.*" + "from identity i join issuance i2 on i.id = i2.id")
+    List<ManageIssuance> selectIssuance();
 }

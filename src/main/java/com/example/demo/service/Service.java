@@ -2,6 +2,7 @@ package com.example.demo.service;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
+import com.example.demo.dto.ManageIssuance;
 import com.example.demo.dto.ManageMigrate;
 import com.example.demo.dto.ManageResident;
 import com.example.demo.dto.Search;
@@ -170,7 +171,32 @@ public class Service {
         return extendMapper.selectResident();
     }
 
-    public boolean editResident(Resident resident) {
-        return residentMapper.updateById(resident) > 0;
+
+
+    public List<ManageIssuance> getIssuance() {
+        return extendMapper.selectIssuance();
+    }
+
+    public boolean setAddress(String id, String address) {
+        Identity identity = identityMapper.selectById(id);
+        identity.setAddress(address);
+        return identityMapper.updateById(identity) > 0;
+    }
+
+    public boolean addResident(Issuance issuance) {
+        Resident resident = new Resident();
+        resident.setId(issuance.getId());
+        resident.setPeriod(issuance.getPeriod());
+        return residentMapper.insert(resident) > 0;
+    }
+
+    public boolean deleteResident(String id) {
+        return residentMapper.deleteById(id) > 0;
+    }
+
+    public boolean deleteIssuance(String id, String type) {
+        UpdateWrapper<Issuance> updateWrapper = new UpdateWrapper<>();
+        updateWrapper.eq("id", id).eq("type", type);
+        return issuanceMapper.delete(updateWrapper) > 0;
     }
 }

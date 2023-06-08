@@ -38,7 +38,7 @@ public class AnalysisController {
         return educationCounts;
     }
 
-    @GetMapping("/AgeCounts")
+    @GetMapping("/ageCounts")
     public int[] getAgeCounts() {
         LocalDate startDate1 = LocalDate.of(2013, 1, 1);
         LocalDate startDate2 = LocalDate.of(2005, 1, 1);

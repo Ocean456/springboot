@@ -1,5 +1,6 @@
 package com.example.demo.controller;
 
+import com.example.demo.dto.ManageIssuance;
 import com.example.demo.dto.ManageMigrate;
 import com.example.demo.dto.ManageResident;
 import com.example.demo.dto.Total;
@@ -127,20 +128,46 @@ public class ExtendController {
 
     @PutMapping("/migrate/handle")
     public ResponseEntity<Object> handleMigrate(@RequestBody Migrate migrate) {
-        if (service.editMigrate(migrate)) {
+        if (service.editMigrate(migrate) && service.setAddress(migrate.getId(), migrate.getAddress())) {
             return ResponseEntity.ok("处理成功");
         } else {
             return ResponseEntity.status(HttpStatus.CONFLICT).body("处理失败");
         }
     }
 
-    @PutMapping("/resident/handle")
-    public ResponseEntity<Object> handleResident(@RequestBody Resident resident) {
-        if (service.editResident(resident)) {
+    @GetMapping("/issuance/search")
+    public List<ManageIssuance> searchIssuance() {
+        return service.getIssuance();
+    }
+
+    @PutMapping("/issuance/handle")
+    public ResponseEntity<Object> handleIssuance(@RequestBody Issuance issuance) {
+        if (issuance.getType().equals("resident") && issuance.getStatus() == 0) {
+            if (service.addResident(issuance)) {
+                ResponseEntity.ok("处理成功");
+            } else {
+                return ResponseEntity.status(HttpStatus.CONFLICT).body("处理失败");
+            }
+        }
+        if (service.editIssuance(issuance)) {
             return ResponseEntity.ok("处理成功");
         } else {
-            return ResponseEntity.status(HttpStatus.CONFLICT).body("处理失败");
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("未知错误");
         }
+    }
+
+    @DeleteMapping("/resident/delete")
+    public ResponseEntity<Object> deleteResident(String id) {
+        if (service.deleteResident(id)) {
+            return ResponseEntity.ok("删除成功");
+        } else return ResponseEntity.status(HttpStatus.CONFLICT).body("删除失败");
+    }
+
+    @DeleteMapping("/issuance/delete")
+    public ResponseEntity<Object> deleteIssuance(String id,String type) {
+        if (service.deleteIssuance(id,type)) {
+            return ResponseEntity.ok("删除成功");
+        } else return ResponseEntity.status(HttpStatus.CONFLICT).body("删除失败");
     }
 }
 

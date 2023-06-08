@@ -14,5 +14,4 @@ public class Resident {
     @Id
     private String id;
     private LocalDate period;
-    private int status;
 }
