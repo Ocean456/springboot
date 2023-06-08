@@ -170,4 +170,8 @@ public class Service {
         updateWrapper.eq("id", issuance.getId()).eq("type", issuance.getType());
         return issuanceMapper.update(issuance, updateWrapper) > 0;
     }
+
+    public List<Migrate> getMigrate() {
+        return migrateMapper.selectList(null);
+    }
 }
