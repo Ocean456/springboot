@@ -3,6 +3,7 @@ package com.example.demo.controller;
 import com.example.demo.dto.Search;
 import com.example.demo.entity.Identity;
 import com.example.demo.service.Service;
+import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,14 +19,19 @@ public class IdentityController {
     Service service;
 
     @GetMapping("/search")
-    public List<Identity> getIdentity(Search search) {
+    @Operation(summary = "检索身份信息")
+    public ResponseEntity<Object> getIdentity(Search search) {
+        List<Identity> identities;
         if (search.getType() == null) {
-            return service.getIdentity();
+            identities = service.getIdentity();
+            return ResponseEntity.ok(identities);
         }
-        return service.getIdentity(search);
+        identities = service.getIdentity(search);
+        return ResponseEntity.ok().body(identities);
     }
 
     @DeleteMapping("/delete")
+    @Operation(summary = "删除身份信息")
     public ResponseEntity<Object> deleteIdentity(String id) {
         if (service.deleteIdentity(id)) {
             return ResponseEntity.ok("删除成功");
@@ -35,6 +41,7 @@ public class IdentityController {
     }
 
     @PostMapping("/add")
+    @Operation(summary = "添加身份信息")
     public ResponseEntity<Object> addIdentity(@RequestBody Identity identity) {
         if (service.addIdentity(identity)) {
             return ResponseEntity.ok("添加成功");
@@ -44,6 +51,7 @@ public class IdentityController {
     }
 
     @PutMapping("/edit")
+    @Operation(summary = "编辑身份信息")
     public ResponseEntity<Object> editIdentity(@RequestBody Identity identity) {
         if (service.editIdentity(identity)) {
             return ResponseEntity.ok("编辑成功");
@@ -53,6 +61,7 @@ public class IdentityController {
     }
 
     @GetMapping("/personal")
+    @Operation(summary = "获取用户个人信息")
     public ResponseEntity<Object> getPersonal(String username) {
         try {
             Identity identity = service.getPerson(username);

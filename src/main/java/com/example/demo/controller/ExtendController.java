@@ -6,6 +6,7 @@ import com.example.demo.dto.ManageResident;
 import com.example.demo.dto.Total;
 import com.example.demo.entity.*;
 import com.example.demo.service.Service;
+import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -21,8 +22,10 @@ public class ExtendController {
     @Autowired
     Service service;
 
+
     @GetMapping("/all/search")
-    public Total getAll(String id) {
+    @Operation(summary = "信息查询")
+    public ResponseEntity<Object> getAll(String id) {
         Identity identity = service.getIdentity(id);
         Domicile domicile = service.getDomicile(id);
         Resident resident = service.getResident(id);
@@ -36,24 +39,24 @@ public class ExtendController {
         if (resident != null) {
             BeanUtils.copyProperties(resident, total);
         }
-        return total;
+        return ResponseEntity.ok().body(total);
     }
 
     @PostMapping("/all/add")
+    @Operation(summary = "人口登记")
     public ResponseEntity<Object> addAll(@RequestBody Total total) {
         try {
             Identity identity = new Identity();
             Domicile domicile = new Domicile();
-            Resident resident = new Resident();
             BeanUtils.copyProperties(total, identity);
             BeanUtils.copyProperties(total, domicile);
-            BeanUtils.copyProperties(total, resident);
+            if (service.getIdentity(identity.getId()) != null)
+                return ResponseEntity.status(HttpStatus.ALREADY_REPORTED).body("身份证号已存在");
             if (!identity.getId().equals("")) {
                 service.addIdentity(identity);
                 service.addDomicile(domicile);
-                service.addResident(resident);
             } else {
-                return ResponseEntity.status(HttpStatus.FORBIDDEN).body("服务器内部错误");
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).body("请检查输入");
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -63,11 +66,14 @@ public class ExtendController {
     }
 
     @GetMapping("/issuance/get")
-    public Issuance getIssuance(@RequestParam String id, @RequestParam String type) {
-        return service.getIssuance(id, type);
+    @Operation(summary = "获取个人证件信息")
+    public ResponseEntity<Object> getIssuance(@RequestParam String id, @RequestParam String type) {
+        Issuance issuance = service.getIssuance(id, type);
+        return ResponseEntity.ok().body(issuance);
     }
 
     @PostMapping("/issuance/add")
+    @Operation(summary = "个人申请证件")
     public ResponseEntity<Object> addIssuance(@RequestBody Issuance issuance) {
         if (issuance.getId() == null) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body("请检查填写内容");
@@ -85,11 +91,14 @@ public class ExtendController {
     }
 
     @GetMapping("/migrate/get")
-    public Migrate getMigrate(String id) {
-        return service.getMigrate(id);
+    @Operation(summary = "获取个人迁移信息")
+    public ResponseEntity<Object> getMigrate(String id) {
+        Migrate migrate = service.getMigrate(id);
+        return ResponseEntity.ok().body(migrate);
     }
 
     @PostMapping("/migrate/add")
+    @Operation(summary = "个人申请迁移")
     public ResponseEntity<Object> addMigrate(@RequestBody Migrate migrate) {
         if (migrate.getId() == null) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body("请检查填写内容");
@@ -107,6 +116,7 @@ public class ExtendController {
     }
 
     @PutMapping("/migrate/edit")
+    @Operation(summary = "编辑迁移信息")
     public ResponseEntity<Object> editMigrate(Migrate migrate) {
         boolean result = service.editMigrate(migrate);
         if (result) {
@@ -117,16 +127,21 @@ public class ExtendController {
     }
 
     @GetMapping("/migrate/search")
-    public List<ManageMigrate> searchMigrate() {
-        return service.getMigrate();
+    @Operation(summary = "获取迁移管理数据")
+    public ResponseEntity<Object> searchMigrate() {
+        List<ManageMigrate> manageMigrates = service.getMigrate();
+        return ResponseEntity.ok().body(manageMigrates);
     }
 
     @GetMapping("/resident/search")
-    public List<ManageResident> searchResident() {
-        return service.getResident();
+    @Operation(summary = "获取居住证明数据")
+    public ResponseEntity<Object> searchResident() {
+        List<ManageResident> manageResidents = service.getResident();
+        return ResponseEntity.ok().body(manageResidents);
     }
 
     @PutMapping("/migrate/handle")
+    @Operation(summary = "处理迁移申请")
     public ResponseEntity<Object> handleMigrate(@RequestBody Migrate migrate) {
         if (service.editMigrate(migrate) && service.setAddress(migrate.getId(), migrate.getAddress())) {
             return ResponseEntity.ok("处理成功");
@@ -136,11 +151,14 @@ public class ExtendController {
     }
 
     @GetMapping("/issuance/search")
-    public List<ManageIssuance> searchIssuance() {
-        return service.getIssuance();
+    @Operation(summary = "获取证件发放数据")
+    public ResponseEntity<Object> searchIssuance() {
+        List<ManageIssuance> issuance = service.getIssuance();
+        return ResponseEntity.ok().body(issuance);
     }
 
     @PutMapping("/issuance/handle")
+    @Operation(summary = "处理证件发放")
     public ResponseEntity<Object> handleIssuance(@RequestBody Issuance issuance) {
         if (issuance.getType().equals("resident") && issuance.getStatus() == 0) {
             if (service.addResident(issuance)) {
@@ -157,6 +175,7 @@ public class ExtendController {
     }
 
     @DeleteMapping("/resident/delete")
+    @Operation(summary = "删除居住证明数据")
     public ResponseEntity<Object> deleteResident(String id) {
         if (service.deleteResident(id)) {
             return ResponseEntity.ok("删除成功");
@@ -164,8 +183,17 @@ public class ExtendController {
     }
 
     @DeleteMapping("/issuance/delete")
-    public ResponseEntity<Object> deleteIssuance(String id,String type) {
-        if (service.deleteIssuance(id,type)) {
+    @Operation(summary = "删除证件发放数据")
+    public ResponseEntity<Object> deleteIssuance(String id, String type) {
+        if (service.deleteIssuance(id, type)) {
+            return ResponseEntity.ok("删除成功");
+        } else return ResponseEntity.status(HttpStatus.CONFLICT).body("删除失败");
+    }
+
+    @DeleteMapping("/migrate/delete")
+    @Operation(summary = "删除迁移管理数据")
+    public ResponseEntity<Object> deleteMigrate(@RequestParam String id) {
+        if (service.deleteMigrate(id)) {
             return ResponseEntity.ok("删除成功");
         } else return ResponseEntity.status(HttpStatus.CONFLICT).body("删除失败");
     }

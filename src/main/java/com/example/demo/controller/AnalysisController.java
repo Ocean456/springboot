@@ -1,6 +1,7 @@
 package com.example.demo.controller;
 
 import com.example.demo.repository.UserRepository;
+import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -20,6 +21,7 @@ public class AnalysisController {
     private UserRepository userRepository;
 
     @GetMapping("/genderCount")
+    @Operation(summary = "年龄统计")
     public int[] getGenderCount() {
         int[] genderCounts = new int[2];
         genderCounts[0] = userRepository.countByGender("男");
@@ -28,6 +30,7 @@ public class AnalysisController {
     }
 
     @GetMapping("/educationData")
+    @Operation(summary = "教育程度统计")
     public int[] educationData() {
         int[] educationCounts = new int[5];
         educationCounts[0] = userRepository.countByEducation("小学");
@@ -39,6 +42,7 @@ public class AnalysisController {
     }
 
     @GetMapping("/ageCounts")
+    @Operation(summary = "性别统计")
     public int[] getAgeCounts() {
         LocalDate startDate1 = LocalDate.of(2013, 1, 1);
         LocalDate startDate2 = LocalDate.of(2005, 1, 1);

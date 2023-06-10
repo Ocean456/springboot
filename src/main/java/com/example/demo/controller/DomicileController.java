@@ -3,6 +3,7 @@ package com.example.demo.controller;
 import com.example.demo.dto.Search;
 import com.example.demo.entity.Domicile;
 import com.example.demo.service.Service;
+import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,15 +19,19 @@ public class DomicileController {
     Service service;
 
     @GetMapping("/search")
-    public List<Domicile> getDomicile(Search search) {
+    @Operation(summary = "检索户籍")
+    public ResponseEntity<Object> getDomicile(Search search) {
+        List<Domicile> domiciles;
         if (search.getType() == null) {
-            return service.getDomicile();
+            domiciles = service.getDomicile();
+        } else {
+            domiciles = service.getDomicile(search);
         }
-        return service.getDomicile(search);
-
+        return ResponseEntity.ok().body(domiciles);
     }
 
     @PostMapping("/add")
+    @Operation(summary = "添加户籍")
     public ResponseEntity<Object> addDomicile(@RequestBody Domicile domicile) {
         if (service.addDomicile(domicile)) {
             return ResponseEntity.ok("添加成功");
@@ -36,6 +41,7 @@ public class DomicileController {
     }
 
     @PutMapping("/edit")
+    @Operation(summary = "修改户籍")
     public ResponseEntity<Object> editDomicile(@RequestBody Domicile domicile) {
         if (service.editDomicile(domicile)) {
             return ResponseEntity.ok("修改成功");
@@ -45,6 +51,7 @@ public class DomicileController {
     }
 
     @DeleteMapping("/delete")
+    @Operation(summary = "删除户籍")
     public ResponseEntity<Object> deleteDomicile(String id) {
         if (service.deleteDomicile(id)) {
             return ResponseEntity.ok().body("删除成功");

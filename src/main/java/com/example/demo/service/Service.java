@@ -2,12 +2,10 @@ package com.example.demo.service;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
-import com.example.demo.dto.ManageIssuance;
-import com.example.demo.dto.ManageMigrate;
-import com.example.demo.dto.ManageResident;
-import com.example.demo.dto.Search;
+import com.example.demo.dto.*;
 import com.example.demo.entity.*;
 import com.example.demo.mapper.*;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
@@ -51,7 +49,7 @@ public class Service {
         return identityMapper.deleteById(id) > 0;
     }
 
-    public boolean addIdentity(Identity identity) {
+    public boolean addIdentity(Identity identity)  {
         return identityMapper.insert(identity) > 0;
     }
 
@@ -141,11 +139,6 @@ public class Service {
         return domicileMapper.deleteById(id) > 0;
     }
 
-    @SuppressWarnings("UnusedReturnValue")
-    public boolean addResident(Resident resident) {
-        return residentMapper.insert(resident) > 0;
-    }
-
 
     public Issuance getIssuance(String id, String type) {
         QueryWrapper<Issuance> queryWrapper = new QueryWrapper<>();
@@ -170,7 +163,6 @@ public class Service {
     public List<ManageResident> getResident() {
         return extendMapper.selectResident();
     }
-
 
 
     public List<ManageIssuance> getIssuance() {
@@ -198,5 +190,17 @@ public class Service {
         UpdateWrapper<Issuance> updateWrapper = new UpdateWrapper<>();
         updateWrapper.eq("id", id).eq("type", type);
         return issuanceMapper.delete(updateWrapper) > 0;
+    }
+
+    public boolean editUser(ModifyForm modifyForm) {
+        UpdateWrapper<User> updateWrapper = new UpdateWrapper<>();
+        updateWrapper.eq("password", modifyForm.getOld());
+        User user = new User();
+        BeanUtils.copyProperties(modifyForm, user);
+        return userMapper.update(user, updateWrapper) > 0;
+    }
+
+    public boolean deleteMigrate(String id) {
+        return migrateMapper.deleteById(id) > 0;
     }
 }
